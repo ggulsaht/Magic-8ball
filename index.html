@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Magic 8 Ball</title>
+  <style>
+    /* Global ayarlar */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+      text-align: center;
+      transition: background-color 0.5s ease;
+    }
+
+    /* Sol üstteki başlık ve top */
+    #magic8ball-header {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    #magic8ball-header .ball {
+      width: 40px;
+      height: 40px;
+      background-color: black;
+      border-radius: 50%;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+
+    #magic8ball-header h1 {
+      font-size: 24px;
+      color: #333;
+    }
+
+    /* Konteyner ayarları */
+    #container {
+      max-width: 600px;
+      width: 100%;
+      padding: 20px;
+      margin-top: 100px; /* Başlık ve top kısmını üstten itmek için */
+    }
+
+    /* Diğer stil ayarları */
+    #ball {
+      width: 150px;
+      height: 150px;
+      background-color: black;
+      border-radius: 50%;
+      margin: 20px auto;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.3s ease;
+    }
+
+    #answer {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    #question {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+
+    #question-input {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #333;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    #instructions {
+      margin-top: 30px;
+      font-size: 18px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div id="magic8ball-header">
+    <div class="ball">8</div>
+    <h1>Magic 8 Ball</h1>
+  </div>
+
+  <div id="container">
+    <div id="question">
+      <label for="question-input">Sorunuzu yazın:</label>
+      <input type="text" id="question-input" placeholder="Buraya soru yazın...">
+    </div>
+    <div id="ball">Salla!</div>
+    <div id="answer"></div>
+    <div id="instructions">Sadece soruyu yazın ve 8 ball’a tıklayın!</div>
+  </div>
+
+  <script>
+    // Olası cevaplar ve renkler
+    const answers = [
+      { text: "Evet", color: "green" },
+      { text: "Hayır", color: "red" },
+      { text: "Büyük ihtimalle evet", color: "blue" },
+      { text: "Büyük ihtimalle hayır", color: "gray" },
+      { text: "Kesinlikle evet", color: "orange" },
+      { text: "Kesinlikle hayır", color: "darkred" },
+      { text: "Cevabını daha sonra al", color: "yellow" },
+      { text: "Bu konuda belirsizlik var", color: "navy" },
+      { text: "Yeniden sor", color: "purple" },
+      { text: "Zamanla değişebilir", color: "white" },
+      { text: "Sonuçlar belirsiz", color: "darkorange" },
+      { text: "Pozitif düşün", color: "lightgreen" },
+      { text: "Hayal et, olur", color: "pink" },
+      { text: "Şu an için evet", color: "lightblue" },
+      { text: "Şu an için hayır", color: "darkblue" },
+      { text: "Olumlu ama dikkatli ol", color: "turquoise" },
+      { text: "Gelecek belirsiz", color: "grayblue" },
+      { text: "Zamanla olacak", color: "beige" },
+      { text: "Çok geç kaldın", color: "black" },
+      { text: "Şansına göre değişir", color: "darkgreen" },
+      { text: "Bugün hayır, belki yarın", color: "lavender" },
+      { text: "Hikaye henüz yazılmadı", color: "lightyellow" },
+      { text: "Kesin bilgi yok", color: "lightgray" },
+      { text: "Çok uzak gelecekte evet", color: "lightorange" },
+      { text: "Yavaş git, dikkat et", color: "brown" },
+      { text: "Bunu unut", color: "lightcoral" },
+      { text: "Bunu unutma, işin içinde bir şey var", color: "yellowgreen" },
+      { text: "Biraz daha düşünmelisin", color: "lightpurple" },
+      { text: "Fikir değişebilir", color: "skyblue" },
+      { text: "Başka bir bakış açısına ihtiyacın var", color: "pinkgray" }
+    ];
+
+    // HTML elemanları
+    const ball = document.getElementById('ball');
+    const answerDiv = document.getElementById('answer');
+    const body = document.body;
+    const questionInput = document.getElementById('question-input');
+
+    // Tıklandığında rastgele cevap seçme ve arka planı değiştirme
+    ball.onclick = function () {
+      const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+      answerDiv.textContent = `Cevap: "${randomAnswer.text}"`;
+      body.style.backgroundColor = randomAnswer.color;
+      ball.onclick = function () {
+  const questionText = questionInput.value.trim();  // Kullanıcının girdiği soruyu alıyoruz
+
+  // Eğer soru yazılmamışsa uyarı ver
+  if (questionText === "") {
+    alert("Lütfen bir soru giriniz!");  // Uyarıyı gösteriyoruz
+    return;  // Eğer soru yoksa, işlem yapılmaz
+  }
+
+  const randomAnswer = answers[Math.floor(Math.random() * answers.length)];  // Rastgele bir cevap seçiyoruz
+  answerDiv.textContent = `Cevap: "${randomAnswer.text}"`;
+  body.style.backgroundColor = randomAnswer.color;  // Arka plan rengini değiştiriyoruz
+
+  // Topun sallanma animasyonu
+  ball.style.transform = "rotate(360deg)";
+  setTimeout(() => {
+    ball.style.transform = "rotate(0deg)";
+  }, 300);
+
+  // Yazılan soruyu gösteriyoruz
+  answerDiv.innerHTML += `<br><strong>Soru:</strong> ${questionText}`;
+};
+
+
+      // Topun sallanma animasyonu
+      ball.style.transform = "rotate(360deg)";
+      setTimeout(() => {
+        ball.style.transform = "rotate(0deg)";
+      }, 300);
+
+      // Soru yazıldıysa, buraya yazılan soruyu da gösterebiliriz
+      if (questionInput.value.trim() !== "") {
+        answerDiv.innerHTML += `<br><strong>Soru:</strong> ${questionInput.value}`;
+      } else {
+        answerDiv.innerHTML += "<br><strong>Soru:</strong> Belirtilmedi";
+      }
+
+      
+    };
+  </script>
+</body>
+</html>
+
